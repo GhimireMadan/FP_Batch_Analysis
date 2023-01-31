@@ -144,11 +144,14 @@ end
 
 %% Response map
 if isfield(d.Trial_id{1, 1}.Start, 'Tone') ==1
-    Response_Map = {};
+    Response_Map_A = {};
+    Response_Map_A = {};
     for i = 1:numel(d.total_freq)
-        Response_Map{1,i} = mean(d.sorted_data_A{i,1}(:, 1000:2000), 2);  
+        Response_Map_A{1,i} = mean(d.sorted_data_A{i,1}(:, 1000:2000), 2); 
+        Response_Map_C{1,i} = mean(d.sorted_data_C{i,1}(:, 1000:2000), 2);  
     end
-    d.Response_Map_per_trial = flip(cell2mat(Response_Map));
+    d.Response_Map_per_trial_A = flip(cell2mat(Response_Map_A));
+    d.Response_Map_per_trial_C = flip(cell2mat(Response_Map_C));
     
     total_amp = numel(unique(Amplitude_info));
     
@@ -156,11 +159,13 @@ if isfield(d.Trial_id{1, 1}.Start, 'Tone') ==1
     d.Response_Map_mean = [];
     for i = 1:numel(d.Response_Map_per_trial(:,1))
         for j = (1:total_amp)-1
-            p = d.Response_Map_per_trial((j*d.rep_per_stimuli)+1:(j+1)*d.rep_per_stimuli, :);
-            d.Response_Map_mean(j+1,:) = mean(p);
+            p = d.Response_Map_per_trial_A((j*d.rep_per_stimuli)+1:(j+1)*d.rep_per_stimuli, :);
+            q = d.Response_Map_per_trial_C((j*d.rep_per_stimuli)+1:(j+1)*d.rep_per_stimuli, :);
+            d.Response_Map_mean_A(j+1,:) = mean(p);
+            d.Response_Map_mean_C(j+1,:) = mean(q);
         end
     end
-    
+
     %d.org_meanResp_allTrials =reshape(d.Response_Map_per_trial, d.rep_per_stimuli, length(d.Response_Map_mean), []);
     
 end
