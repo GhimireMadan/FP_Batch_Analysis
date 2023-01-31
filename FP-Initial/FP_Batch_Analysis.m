@@ -65,7 +65,9 @@ Error_idx = find(not(cellfun('isempty',aa)));
 
 %remove trials with errors
 d.baseline_corrected_A(Error_idx, :) = [];
-d.baseline_corrected_C(Error_idx, :) = [];
+if isfield(data.streams, 'x465C') ==1
+    d.baseline_corrected_C(Error_idx, :) = [];
+end
 
 if isfield(d.Trial_id{1, 1}.Start, 'Tone') ==1
 
