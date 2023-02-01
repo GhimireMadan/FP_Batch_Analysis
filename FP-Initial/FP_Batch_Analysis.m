@@ -84,9 +84,10 @@ if isfield(d.Trial_id{1, 1}.Start, 'Tone') ==1
     
     [Trial, Trial_idx] = sort(Freq_info);
     sorted_dataFreq_A = d.baseline_corrected_A(Trial_idx, :);
-    sorted_dataFreq_C = d.baseline_corrected_C(Trial_idx, :);
-
-    
+    if isfield(data.streams, 'x465C') ==1
+        sorted_dataFreq_C = d.baseline_corrected_C(Trial_idx, :);
+    end
+        
     Amplitude_info = [];
     for i = 1:numel(d.Trial_id)
         Amplitude_info(i,1) = d.Trial_id{1, i}.Start.Tone.Level.dB_SPL;
@@ -99,7 +100,10 @@ if isfield(d.Trial_id{1, 1}.Start, 'Tone') ==1
     int_data_C = {};
     for i = 1:numel(d.total_freq)
         int_data_A{i,1} = sorted_dataFreq_A((i-1)*total_rep+1:i*total_rep, :);
-        int_data_C{i,1} = sorted_dataFreq_C((i-1)*total_rep+1:i*total_rep, :);
+            if isfield(data.streams, 'x465C') ==1
+                int_data_C{i,1} = sorted_dataFreq_C((i-1)*total_rep+1:i*total_rep, :);
+            end
+        
     end
     
     % Sort intensity for each frequency
@@ -110,13 +114,16 @@ if isfield(d.Trial_id{1, 1}.Start, 'Tone') ==1
     % [bin.cnt_unique, bin.unique_Freq] = hist(bin.Trial, unique(bin.Trial));
     % bin.cum_unique = cumsum(bin.cnt_unique);
     d.sorted_data_A = {};
-    d.sorted_data_B = {};
+    d.sorted_data_C = {};
     for i = 1:numel(d.total_freq)
         temp_idx = Amplitude_sort_idx(:,i);
         temp_data_A = int_data_A{i,1};
-        temp_data_B = int_data_C{i,1};
         d.sorted_data_A{i,1} = temp_data_A(temp_idx,:);
-        d.sorted_data_B{i,1} = temp_data_B(temp_idx,:);
+        if isfield(data.streams, 'x465C') ==1
+            temp_data_C = int_data_C{i,1};
+            d.sorted_data_C{i,1} = temp_data_C(temp_idx,:);
+        end        
+        
     end
 end
 
@@ -135,8 +142,9 @@ if isfield(d.Trial_id{1, 1}.Start, 'Noise') ==1
     [r,c] = size(d.baseline_corrected_A);
     nlay  = 3;
     d.sorted_data_A   = permute(reshape(d.baseline_corrected_A',[c,d.total_rep,d.total_freq]),[2,1,3]);
-    d.sorted_data_C   = permute(reshape(d.baseline_corrected_C',[c,d.total_rep,d.total_freq]),[2,1,3]);
-
+        if isfield(data.streams, 'x465C') ==1
+            d.sorted_data_C   = permute(reshape(d.baseline_corrected_C',[c,d.total_rep,d.total_freq]),[2,1,3]);
+        end
 end
 % Create a final matrix. The data are organized by freqency trials in
 % ascending order of intensity (x-y) and frequency (z)
@@ -150,21 +158,30 @@ if isfield(d.Trial_id{1, 1}.Start, 'Tone') ==1
     Response_Map_A = {};
     for i = 1:numel(d.total_freq)
         Response_Map_A{1,i} = mean(d.sorted_data_A{i,1}(:, 1000:2000), 2); 
-        Response_Map_C{1,i} = mean(d.sorted_data_C{i,1}(:, 1000:2000), 2);  
+        if isfield(data.streams, 'x465C') ==1
+            Response_Map_C{1,i} = mean(d.sorted_data_C{i,1}(:, 1000:2000), 2);
+        end
     end
     d.Response_Map_per_trial_A = flip(cell2mat(Response_Map_A));
-    d.Response_Map_per_trial_C = flip(cell2mat(Response_Map_C));
+    
+    if isfield(data.streams, 'x465C') ==1
+        d.Response_Map_per_trial_C = flip(cell2mat(Response_Map_C));
+    end
     
     total_amp = numel(unique(Amplitude_info));
     
     
-    d.Response_Map_mean = [];
-    for i = 1:numel(d.Response_Map_per_trial(:,1))
+    d.Response_Map_mean_A = [];
+    d.Response_Map_mean_C = []
+    for i = 1:numel(d.Response_Map_per_trial_A(:,1))
         for j = (1:total_amp)-1
             p = d.Response_Map_per_trial_A((j*d.rep_per_stimuli)+1:(j+1)*d.rep_per_stimuli, :);
-            q = d.Response_Map_per_trial_C((j*d.rep_per_stimuli)+1:(j+1)*d.rep_per_stimuli, :);
             d.Response_Map_mean_A(j+1,:) = mean(p);
-            d.Response_Map_mean_C(j+1,:) = mean(q);
+            
+            if isfield(data.streams, 'x465C') ==1
+                q = d.Response_Map_per_trial_C((j*d.rep_per_stimuli)+1:(j+1)*d.rep_per_stimuli, :);
+                d.Response_Map_mean_C(j+1,:) = mean(q);
+            end
         end
     end
 

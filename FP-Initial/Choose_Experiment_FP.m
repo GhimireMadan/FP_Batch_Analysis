@@ -5,7 +5,7 @@ clear all
 % experimental information
 addpath('./utils/')
 input.AnimalID = '585A';
-input.Date_of_experiment = [12723, 13023];
+input.Date_of_experiment = [10923, 11023, 11323, 11723, 11723, 11823, 11923, 12723, 13023];
 input.spreadsheet = 'W:\Data\Fiber_Photometry\DataPath';
 
 %
