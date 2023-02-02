@@ -23,7 +23,7 @@ for i = 1:numel(x465A)
 end
 
 if isfield(data.streams, 'x465C') ==1
-   x465C = transpose(data.streams.x465A.filtered);
+   x465C = transpose(data.streams.x465C.filtered);
    x465C = cellfun(@(x) x(1:d.Samples_per_time*Total_time), x465C,'UniformOutput',false);
    isobestic_C = transpose(data.streams.x405C.filtered);
    isobestic_C = cellfun(@(x) x(1:d.Samples_per_time*Total_time), isobestic_C,'UniformOutput',false);
@@ -172,7 +172,7 @@ if isfield(d.Trial_id{1, 1}.Start, 'Tone') ==1
     
     
     d.Response_Map_mean_A = [];
-    d.Response_Map_mean_C = []
+    d.Response_Map_mean_C = [];
     for i = 1:numel(d.Response_Map_per_trial_A(:,1))
         for j = (1:total_amp)-1
             p = d.Response_Map_per_trial_A((j*d.rep_per_stimuli)+1:(j+1)*d.rep_per_stimuli, :);

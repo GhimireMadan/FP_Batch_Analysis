@@ -9,11 +9,11 @@ addpath('./utils/')
 % to the desired experimental setup. Currently, this code is set up to run
 % FRA and SAM noise parameters. Future patch is necessary to run further
 % parameters
-input.AnimalID = '585A';
-input.Date_of_experiment = [10923, 11023, 11323, 11723, 11723, 11823, 11923, 12723, 13023];
+input.AnimalID = '585';
+input.Date_of_experiment = [20223];
 input.spreadsheet = 'W:\Data\Fiber_Photometry\DataPath';
 Batch_data = [];
-input.data_window = [-1 4];
+input.data_window = [-1 3];
 
 %% selects animals based on the above mentioned criteria
 input.data_matrix = readtable(input.spreadsheet, 'TextType', 'char','VariableNamingRule','preserve');
