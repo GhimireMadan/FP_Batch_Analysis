@@ -19,7 +19,7 @@ isobestic_A = cellfun(@(x) x(1:d.Samples_per_time*Total_time), isobestic_A,'Unif
 d.baseline_corrected_A = [];
 for i = 1:numel(x465A)
     baseline_corrected_dum(i,:) = x465A{i,1} - isobestic_A{i,1};
-    d.baseline_corrected_A(i,:) = baseline_corrected_dum(i,:)-mean(baseline_corrected_dum(i, 1:baseline_window));
+    d.baseline_corrected_A(i,:) = ((baseline_corrected_dum(i,:)-mean(baseline_corrected_dum(i, 1:baseline_window)))/mean(baseline_corrected_dum(i, 1:baseline_window)))*100;
 end
 
 if isfield(data.streams, 'x465C') ==1
@@ -31,8 +31,8 @@ if isfield(data.streams, 'x465C') ==1
    d.baseline_corrected_C = [];
 
     for i = 1:numel(x465C)
-        baseline_corrected_dum(i,:) = x465C{i,1} - isobestic_C{i,1};
-        d.baseline_corrected_C(i,:) = baseline_corrected_dum(i,:)-mean(baseline_corrected_dum(i, 1:baseline_window));
+        baseline_corrected_dum1(i,:) = x465C{i,1} - isobestic_C{i,1};
+        d.baseline_corrected_C(i,:) = ((baseline_corrected_dum1(i,:)-mean(baseline_corrected_dum1(i, 1:baseline_window)))/mean(baseline_corrected_dum(i, 1:baseline_window)))*100;
     end
 end
  
@@ -142,9 +142,23 @@ if isfield(d.Trial_id{1, 1}.Start, 'Noise') ==1
     [r,c] = size(d.baseline_corrected_A);
     nlay  = 3;
     d.sorted_data_A   = permute(reshape(d.baseline_corrected_A',[c,d.total_rep,d.total_freq]),[2,1,3]);
+    d.mean_data_A = [];
+    for i = 1: d.total_freq
+        d.mean_data_A(i, :) = mean(d.sorted_data_A(:,:,i), 1);
+        d.std_A(i,:) = std(d.sorted_data_A(:,:,i), 1); 
+        d.SEM_A(i,:) = d.std_A(i,:)/sqrt(d.total_rep);
+    end
+
         if isfield(data.streams, 'x465C') ==1
             d.sorted_data_C   = permute(reshape(d.baseline_corrected_C',[c,d.total_rep,d.total_freq]),[2,1,3]);
+            d.mean_data_C = [];
+            for i = 1: d.total_freq
+                d.mean_data_C(i, :) = mean(d.sorted_data_C(:,:,i), 1);
+                d.std_C(i,:) = std(d.sorted_data_C(:,:,i), 1);
+                d.SEM_C(i,:) = d.std_C(i,:)/sqrt(d.total_rep);
+            end 
         end
+    
 end
 % Create a final matrix. The data are organized by freqency trials in
 % ascending order of intensity (x-y) and frequency (z)
