@@ -69,6 +69,8 @@ if isfield(data.streams, 'x465C') ==1
     d.baseline_corrected_C(Error_idx, :) = [];
 end
 
+%if d.trial_id == 
+
 if isfield(d.Trial_id{1, 1}.Start, 'Tone') ==1
 
     % sort data by trials # Frequency
@@ -136,12 +138,26 @@ if isfield(d.Trial_id{1, 1}.Start, 'Noise') ==1
     d.total_rep = floor(numel(Freq_info)/numel(unique(Freq_info)));
     d.freq = unique(Freq_info);
     d.total_freq = numel(d.freq);
+    
 
-    [sorted_Freq, Freq_idx] = sort(Freq_info);
+    %total_rep = floor(numel(trials2use)/numel(unique(Freq_info)));
+    
+    %d.total_freq = numel(unique(Freq_info));
+    %Freq_info(Error_idx, :) = [];
+    %Freq_info = Freq_info(1:numel(d.total_freq)*total_rep);
+    
+    [Trial, Trial_idx] = sort(Freq_info);
+    sorted_dataFreq_A = d.baseline_corrected_A(Trial_idx, :);
+    if isfield(data.streams, 'x465C') ==1
+        sorted_dataFreq_C = d.baseline_corrected_C(Trial_idx, :);
+    end
+%     [sorted_Freq, Freq_idx] = sort(Freq_info);
+%     sorted_A = d.baseline_corrected_A(Freq_idx, :);
+%     sorted_C = d.baseline_corrected_C(Freq_idx, :);
 
     [r,c] = size(d.baseline_corrected_A);
     nlay  = 3;
-    d.sorted_data_A   = permute(reshape(d.baseline_corrected_A',[c,d.total_rep,d.total_freq]),[2,1,3]);
+    d.sorted_data_A   = permute(reshape(sorted_dataFreq_A',[c,d.total_rep,d.total_freq]),[2,1,3]);
     d.mean_data_A = [];
     for i = 1: d.total_freq
         d.mean_data_A(i, :) = mean(d.sorted_data_A(:,:,i), 1);
@@ -150,7 +166,7 @@ if isfield(d.Trial_id{1, 1}.Start, 'Noise') ==1
     end
 
         if isfield(data.streams, 'x465C') ==1
-            d.sorted_data_C   = permute(reshape(d.baseline_corrected_C',[c,d.total_rep,d.total_freq]),[2,1,3]);
+            d.sorted_data_C   = permute(reshape(sorted_dataFreq_A',[c,d.total_rep,d.total_freq]),[2,1,3]);
             d.mean_data_C = [];
             for i = 1: d.total_freq
                 d.mean_data_C(i, :) = mean(d.sorted_data_C(:,:,i), 1);

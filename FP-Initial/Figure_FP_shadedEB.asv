@@ -52,7 +52,7 @@ for plotId = 1 : numel(Batch_data{1,1}.sorted_data_A(:,1,1))
      if ~mod(plotId-1, 25)
         figure();
      end
-     s(plotId) = subplot(5, 5, mod(plotId-1, 25)+1) ;
+     si = subplot(5, 5, mod(plotId-1, 25)+1) ;
      plot(Batch_data{1, 1}.sorted_data_A (plotId,:, 4)', 'color',[201/255, 229/255, 214/255, 0.5], 'LineWidth', 1.5);
 %      alpha(0.2)
 %      xticks(1:sampling_rate-1:max(input.data_window)*sampling_rate)
