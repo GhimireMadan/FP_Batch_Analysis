@@ -137,27 +137,31 @@ if isfield(d.Trial_id{1, 1}, 'Start') ==1
     d.std_A = transpose(reshape(std(d.dFF_A_sorted_innerTOouter), [], trial_count));
     d.SEM_A = d.std_A./ sqrt(d.repetitions);
     
-   
-    d.dFF_B(Error_idx, :) = [];
-    d.dFF_sorted_B = d.dFF_B(d.sorted_idx, :);
-    d.dFF_B_sorted_innerTOouter = permute(reshape(d.dFF_sorted_B', [], repetitions, trial_count),[2,1,3]);
-    d.mean_B = transpose(reshape(mean(d.dFF_B_sorted_innerTOouter), [], trial_count));
-    d.std_B = transpose(reshape(std(d.dFF_B_sorted_innerTOouter), [], trial_count));
-    d.SEM_B = d.std_B./ sqrt(d.repetitions);
+    if isfield(data.streams, 'x465B') ==1
+        d.dFF_B(Error_idx, :) = [];
+        d.dFF_sorted_B = d.dFF_B(d.sorted_idx, :);
+        d.dFF_B_sorted_innerTOouter = permute(reshape(d.dFF_sorted_B', [], repetitions, trial_count),[2,1,3]);
+        d.mean_B = transpose(reshape(mean(d.dFF_B_sorted_innerTOouter), [], trial_count));
+        d.std_B = transpose(reshape(std(d.dFF_B_sorted_innerTOouter), [], trial_count));
+        d.SEM_B = d.std_B./ sqrt(d.repetitions);
+    end
+    if isfield(data.streams, 'x465C') ==1
+        d.dFF_C(Error_idx, :) = [];
+        d.dFF_sorted_C = d.dFF_C(d.sorted_idx, :);
+        d.dFF_C_sorted_innerTOouter = permute(reshape(d.dFF_sorted_C', [], d.repetitions, trial_count),[2,1,3]);
+        d.mean_C = transpose(reshape(mean(d.dFF_C_sorted_innerTOouter), [], trial_count));
+        d.std_C = transpose(reshape(std(d.dFF_C_sorted_innerTOouter), [], trial_count));
+        d.SEM_C = d.std_C./ sqrt(d.repetitions);
+    end
 
-    d.dFF_C(Error_idx, :) = [];
-    d.dFF_sorted_C = d.dFF_C(d.sorted_idx, :);
-    d.dFF_C_sorted_innerTOouter = permute(reshape(d.dFF_sorted_C', [], d.repetitions, trial_count),[2,1,3]);
-    d.mean_C = transpose(reshape(mean(d.dFF_C_sorted_innerTOouter), [], trial_count));
-    d.std_C = transpose(reshape(std(d.dFF_C_sorted_innerTOouter), [], trial_count));
-    d.SEM_C = d.std_C./ sqrt(d.repetitions);
-
-    d.dFF_D(Error_idx, :) = [];
-    d.dFF_sorted_D = d.dFF_D(d.sorted_idx, :);
-    d.dFF_D_sorted_innerTOouter = permute(reshape(d.dFF_sorted_D', [], repetitions, trial_count),[2,1,3]);
-    d.mean_D = transpose(reshape(mean(d.dFF_D_sorted_innerTOouter), [], trial_count));
-    d.std_D = transpose(reshape(std(d.dFF_D_sorted_innerTOouter), [], trial_count));
-    d.SEM_D = d.std_D./ sqrt(d.repetitions)
+    if isfield(data.streams, 'x465D') ==1
+        d.dFF_D(Error_idx, :) = [];
+        d.dFF_sorted_D = d.dFF_D(d.sorted_idx, :);
+        d.dFF_D_sorted_innerTOouter = permute(reshape(d.dFF_sorted_D', [], repetitions, trial_count),[2,1,3]);
+        d.mean_D = transpose(reshape(mean(d.dFF_D_sorted_innerTOouter), [], trial_count));
+        d.std_D = transpose(reshape(std(d.dFF_D_sorted_innerTOouter), [], trial_count));
+        d.SEM_D = d.std_D./ sqrt(d.repetitions)
+    end
 
 
 end
