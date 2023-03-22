@@ -37,11 +37,11 @@ for i = 1:sum(fs)
     for ii = 1:height(X)
         if fs_idx(i) <=2
             X_train_w_best_feature(ii, i) = mean(X(ii, 1:fs_idx(i)+2));
-        if fs_idx(i) >=49            
-            X_train_w_best_feature(ii, i) = mean(X(ii, fs_idx(i)-2:end));
-        else
+        if 
+            fs_idx(i) >=49
+            X_train_w_best_feature(ii, i) = mean(X(ii, 1:fs_idx(i)+2));
+
         X_train_w_best_feature(ii, i) = mean(X(ii, (fs_idx(i)-2:fs_idx(i)+2)));
-        end
     end
 end
 
