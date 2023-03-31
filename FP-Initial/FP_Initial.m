@@ -1,4 +1,4 @@
-function d = BrandNew_Improved_Code(data_spreadsheet, data_window, i, allign_by)
+function d = FP_Initial(data_spreadsheet, data_window, i, allign_by)
 
 % set up initial parameters such as data path and the desired data
 d.synapse_path = data_spreadsheet.("Synapse Path"){i,1};
