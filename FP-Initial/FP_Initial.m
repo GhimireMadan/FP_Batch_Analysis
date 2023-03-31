@@ -1,8 +1,12 @@
 function d = BrandNew_Improved_Code(data_spreadsheet, data_window, i, allign_by)
 
+% set up initial parameters such as data path and the desired data
 d.synapse_path = data_spreadsheet.("Synapse Path"){i,1};
 d.Tosca_path = data_spreadsheet.("Tosca Path"){i,1};
-
+d.dFF_A = [];
+d.dFF_B = [];
+d.dFF_C = [];
+d.dFF_D = [];
 
 % Extract data for desired time frame. It takes the data window from the
 % input and filters the data around the trials.
@@ -18,7 +22,7 @@ x465A = transpose(data.streams.x465A.filtered);
 isobestic_A = transpose(data.streams.x405A.filtered);
 x465A = cellfun(@(x) x(1:d.Samples_per_time*Total_time), x465A,'UniformOutput',false);
 isobestic_A = cellfun(@(x) x(1:d.Samples_per_time*Total_time), isobestic_A,'UniformOutput',false);
-d.dFF_A = [];
+
 for i = 1:numel(x465A)
     baseline_corrected_dum(i,:) = x465A{i,1} - isobestic_A{i,1};
     d.dFF_A(i,:) = ((baseline_corrected_dum(i,:)-mean(baseline_corrected_dum(i, 1:baseline_window)))/mean(baseline_corrected_dum(i, 1:baseline_window)))*100;
@@ -27,7 +31,8 @@ end
 %bin.data_normalized = zscore(bin.baseline_corrected, 0,'all');
 
 
-% Extract trial information from Tosca
+% Extract trial information from Tosca, tosca read run gives individual
+% trial Id
 
 [d.Trial_id, ~]  = tosca_read_run(d.Tosca_path);
 Trial_Results = {};
@@ -51,16 +56,14 @@ d.total_trial = numel(trials2use);
 aa = strfind(Trial_Results, 'Error');
 Error_idx = find(not(cellfun('isempty',aa)));
 
-if isfield(data.streams, 'x465B') ==1
-   x465B = transpose(data.streams.x465C.filtered);
-   x465B = cellfun(@(x) x(1:d.Samples_per_time*Total_time), x465B,'UniformOutput',false);
+if isfield(data.streams, 'x560B') ==1
+   x560B = transpose(data.streams.x560B.filtered);
+   x560B = cellfun(@(x) x(1:d.Samples_per_time*Total_time), x560B,'UniformOutput',false);
    isobestic_B = transpose(data.streams.x405C.filtered);
    isobestic_B = cellfun(@(x) x(1:d.Samples_per_time*Total_time), isobestic_B,'UniformOutput',false);
 
-   d.dFF_B = [];
-
-    for i = 1:numel(x465B)
-        baseline_corrected_dum1(i,:) = x465B{i,1} - isobestic_B{i,1};
+    for i = 1:numel(x560B)
+        baseline_corrected_dum1(i,:) = x560B{i,1} - isobestic_B{i,1};
         d.dFF_B(i,:) = ((baseline_corrected_dum1(i,:)-mean(baseline_corrected_dum1(i, 1:baseline_window)))/mean(baseline_corrected_dum(i, 1:baseline_window)))*100;
     end
 
@@ -72,7 +75,6 @@ if isfield(data.streams, 'x465C') ==1
    isobestic_C = transpose(data.streams.x405C.filtered);
    isobestic_C = cellfun(@(x) x(1:d.Samples_per_time*Total_time), isobestic_C,'UniformOutput',false);
 
-   d.dFF_C = [];
 
     for i = 1:numel(x465C)
         baseline_corrected_dum1(i,:) = x465C{i,1} - isobestic_C{i,1};
@@ -81,16 +83,15 @@ if isfield(data.streams, 'x465C') ==1
 
 end
 
-if isfield(data.streams, 'x465D') ==1
-   x465D = transpose(data.streams.x465C.filtered);
-   x465D = cellfun(@(x) x(1:d.Samples_per_time*Total_time), x465D,'UniformOutput',false);
+if isfield(data.streams, 'x560D') ==1
+   x560D = transpose(data.streams.x560D.filtered);
+   x560D = cellfun(@(x) x(1:d.Samples_per_time*Total_time), x560D,'UniformOutput',false);
    isobestic_D = transpose(data.streams.x405C.filtered);
    isobestic_D = cellfun(@(x) x(1:d.Samples_per_time*Total_time), isobestic_D,'UniformOutput',false);
 
-   d.dFF_D = [];
 
-    for i = 1:numel(x465D)
-        baseline_corrected_dum1(i,:) = x465D{i,1} - isobestic_D{i,1};
+    for i = 1:numel(x560D)
+        baseline_corrected_dum1(i,:) = x560D{i,1} - isobestic_D{i,1};
         d.dFF_D(i,:) = ((baseline_corrected_dum1(i,:)-mean(baseline_corrected_dum1(i, 1:baseline_window)))/mean(baseline_corrected_dum(i, 1:baseline_window)))*100;
     end
 
@@ -137,10 +138,10 @@ if isfield(d.Trial_id{1, 1}, 'Start') ==1
     d.std_A = transpose(reshape(std(d.dFF_A_sorted_innerTOouter), [], trial_count));
     d.SEM_A = d.std_A./ sqrt(d.repetitions);
     
-    if isfield(data.streams, 'x465B') ==1
+    if isfield(data.streams, 'x560B') ==1
         d.dFF_B(Error_idx, :) = [];
         d.dFF_sorted_B = d.dFF_B(d.sorted_idx, :);
-        d.dFF_B_sorted_innerTOouter = permute(reshape(d.dFF_sorted_B', [], repetitions, trial_count),[2,1,3]);
+        d.dFF_B_sorted_innerTOouter = permute(reshape(d.dFF_sorted_B', [], d.repetitions, trial_count),[2,1,3]);
         d.mean_B = transpose(reshape(mean(d.dFF_B_sorted_innerTOouter), [], trial_count));
         d.std_B = transpose(reshape(std(d.dFF_B_sorted_innerTOouter), [], trial_count));
         d.SEM_B = d.std_B./ sqrt(d.repetitions);
@@ -154,14 +155,19 @@ if isfield(d.Trial_id{1, 1}, 'Start') ==1
         d.SEM_C = d.std_C./ sqrt(d.repetitions);
     end
 
-    if isfield(data.streams, 'x465D') ==1
+    if isfield(data.streams, 'x560D') ==1
         d.dFF_D(Error_idx, :) = [];
         d.dFF_sorted_D = d.dFF_D(d.sorted_idx, :);
-        d.dFF_D_sorted_innerTOouter = permute(reshape(d.dFF_sorted_D', [], repetitions, trial_count),[2,1,3]);
+        d.dFF_D_sorted_innerTOouter = permute(reshape(d.dFF_sorted_D', [], d.repetitions, trial_count),[2,1,3]);
         d.mean_D = transpose(reshape(mean(d.dFF_D_sorted_innerTOouter), [], trial_count));
         d.std_D = transpose(reshape(std(d.dFF_D_sorted_innerTOouter), [], trial_count));
-        d.SEM_D = d.std_D./ sqrt(d.repetitions)
+        d.SEM_D = d.std_D./ sqrt(d.repetitions);
     end
+else
+    d.dFF_A(Error_idx, :) = [];
+    d.dFF_B(Error_idx, :) = [];
+    d.dFF_C(Error_idx, :) = [];
+    d.dFF_D(Error_idx, :) = [];
 
 
 end

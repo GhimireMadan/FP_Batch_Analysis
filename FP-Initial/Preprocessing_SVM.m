@@ -47,7 +47,11 @@ end
 
 %% calculate coding accuracy between target and non target stimulus.
 
-Accuracy = {};
+Accuracy = [];
 for total_target = 1:numel(target_A_X)
-    Accuracy{total_target, 1} = Decode_between_stim(target_A_X{i,1}, Non_target_A_X{i,1}, total_target);
+    Accuracy(:, total_target) = Decode_between_stim(target_A_X{i,1}, target_C_X{i,1}, total_target);
 end
+
+mean(Accuracy, 1)
+
+

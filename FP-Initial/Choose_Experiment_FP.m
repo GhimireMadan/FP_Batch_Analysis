@@ -10,12 +10,12 @@ addpath('./utils/')
 % FRA and SAM noise parameters. Future patch is necessary to run further
 % parameters
 input.parameter_used = 'RLF'; % very important to set the parameter files. Currently it works with 'FRA', 'RLF', and 'sAM'
-input.AnimalID = '607';
-input.Run = 'Run 1';
-input.Date_of_experiment = [31423];
+input.AnimalID = 'TEST';
+input.Run = 'Run 6';
+input.Date_of_experiment = [33123];
 input.spreadsheet = 'W:\Data\Fiber_Photometry\DataPath.xlsx';
 Batch_data = [];
-input.data_window = [-1 4];
+input.data_window = [-1 5];
 sampling_rate = 1017;
 baseline_window = abs(min(input.data_window)*1017);
 response_time = (baseline_window + 1):baseline_window + 500;
